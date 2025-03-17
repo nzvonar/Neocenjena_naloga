@@ -10,7 +10,7 @@
     <body>
         <h1>Kvadratki Igra</h1>
         <p>Pritisni ustrezno tipko kvadrata, v katerem se nahaja krog.</p>
-        <canvas id="gameCanvas" width="800" height="300"></canvas>
+        <canvas id="gameCanvas" width="800" height="250"></canvas>
 
         <!-- Div za prikaz rezultata -->
          <div id="gameResult" style="display: none; font-size: 24px;"></div>
@@ -22,7 +22,7 @@
             const canvas = document.getElementById("gameCanvas");
             const ctx = canvas.getContext("2d");
 
-            const squares = { "A": 250, "B": 350, "C": 450, "D": 550 };
+            const squares = { "A": 150, "B": 300, "C": 450, "D": 600 };
             let correctLetter = "";
             let attempts = 0; // število poskusov
             let correctAnswers = 0; 
@@ -39,10 +39,10 @@
 
                 Object.entries(squares).forEach(([letter, x]) => {
                     ctx.fillStyle = "blue";
-                    ctx.fillRect(x - 20, 80, 40, 40);
+                    ctx.fillRect(x - 20, 80, 80, 80);
 
-                    ctx.fillStyle = "green";
-                    ctx.fillText(letter, x - 5, 140);
+                    ctx.fillStyle = "blue";
+                    ctx.fillText(letter, x + 13, 190);
                 });
 
                 correctLetter = Object.keys(squares)[Math.floor(Math.random() * 4)];
@@ -50,12 +50,12 @@
 
                 ctx.fillStyle = "yellow";
                 ctx.beginPath();
-                ctx.arc(circleX, 100, 10, 0, Math.PI * 2);
+                ctx.arc(circleX + 20, 120, 20, 0, Math.PI * 2);
                 ctx.fill();
             }
 
             document.addEventListener("keydown", (event) => {
-                if (attempts >= 5) return; // ko dosežemo 5 poskusov, ne naredimo nič več
+                if (attempts >= 15) return; // ko dosežemo 15 poskusov, ne naredimo nič več
              
                 if (event.key.toUpperCase() === correctLetter) {
                     correctAnswers++;
@@ -67,8 +67,8 @@
 
                 attempts++;
 
-                // po 5. poskusu prikažemo rezultat
-                if (attempts >= 5) {
+                // po 15. poskusu prikažemo rezultat
+                if (attempts >= 15) {
                     if (isFirstRound) {
                         showFirstRoundResult();
                     } else {
@@ -82,7 +82,7 @@
             function showFirstRoundResult() {
                 const resultDiv = document.getElementById("gameResult");
                 resultDiv.style.display = "block";  // Prikazemo rezultat
-                resultDiv.innerHTML = `<p>Vaša prva igra ni bila uspešna!</p>`;
+                resultDiv.innerHTML = `<p>Žal ste nalogo rešili neuspešno!</p>`;
 
                 // Pokažemo gumb za ponovni zagon igre
                 const restartButton = document.getElementById("restartButton");
