@@ -1,0 +1,27 @@
+body {
+    text-align:center;
+    font-family: Arial, sans-serif;
+}
+
+.gumb {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff; /* Modra barva */
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+}
+
+.gumb:hover {
+    background-color: #0056b3; /* Temnejša modra ob prehodu */
+    transform: scale(1.05);
+}
+
+.gumb:active {
+    background-color: #00408d; /* Še temnejša modra ob kliku */
+    transform: scale(0.98);
+}

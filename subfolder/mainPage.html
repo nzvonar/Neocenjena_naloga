@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Kvadratki Igra</title>  <!--naslov igre-->
+        <link rel="stylesheet" href="style2.css">
+    </head>
+
+    <body>
+        <h1>Kvadratki Igra</h1>
+        <p>Pritisni ustrezno tipko kvadrata, v katerem se nahaja krog.</p>
+        <canvas id="gameCanvas" width="800" height="300"></canvas>
+
+        <!-- Div za prikaz rezultata -->
+         <div id="gameResult" style="display: none; font-size: 24px;"></div>
+
+         <!-- Gumb za ponovni zagon igre-->
+          <button id="restartButton" style="display: none; font-size: 18px; padding: 10px 20px;">Ponovi igro</button>
+
+        <script>
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+
+            const squares = { "A": 250, "B": 350, "C": 450, "D": 550 };
+            let correctLetter = "";
+            let attempts = 0; // število poskusov
+            let correctAnswers = 0; 
+            let incorrectAnswers = 0;
+            let isFirstRound = true;
+
+            function drawGame() {
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "red";
+                ctx.font = "20px Arial";
+                ctx.fillText("Pritisni pravo črko!", 320, 30);
+
+                Object.entries(squares).forEach(([letter, x]) => {
+                    ctx.fillStyle = "blue";
+                    ctx.fillRect(x - 20, 80, 40, 40);
+
+                    ctx.fillStyle = "green";
+                    ctx.fillText(letter, x - 5, 140);
+                });
+
+                correctLetter = Object.keys(squares)[Math.floor(Math.random() * 4)];
+                let circleX = squares[correctLetter];
+
+                ctx.fillStyle = "yellow";
+                ctx.beginPath();
+                ctx.arc(circleX, 100, 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            document.addEventListener("keydown", (event) => {
+                if (attempts >= 5) return; // ko dosežemo 5 poskusov, ne naredimo nič več
+             
+                if (event.key.toUpperCase() === correctLetter) {
+                    correctAnswers++;
+                    // sendResult(true);
+                } else {
+                    incorrectAnswers++;
+                    // sendResult(false);
+                }
+
+                attempts++;
+
+                // po 5. poskusu prikažemo rezultat
+                if (attempts >= 5) {
+                    if (isFirstRound) {
+                        showFirstRoundResult();
+                    } else {
+                        showResult();
+                    }
+                } else {
+                    drawGame();
+                }
+            });
+
+            function showFirstRoundResult() {
+                const resultDiv = document.getElementById("gameResult");
+                resultDiv.style.display = "block";  // Prikazemo rezultat
+                resultDiv.innerHTML = `<p>Vaša prva igra ni bila uspešna!</p>`;
+
+                // Pokažemo gumb za ponovni zagon igre
+                const restartButton = document.getElementById("restartButton");
+                restartButton.style.display = "inline-block";  // Prikazemo gumb
+            }
+
+            function showResult() {
+                const resultDiv = document.getElementById("gameResult");
+                resultDiv.style.display = "block";  // Prikazemo rezultat
+                resultDiv.innerHTML = `
+                    <p>Pravilnih odgovorov: ${correctAnswers}</p>
+                    <p>Napačnih odgovorov: ${incorrectAnswers}</p>
+                `;
+
+                // Pokažemo gumb za ponovni zagon igre
+                const restartButton = document.getElementById("restartButton");
+                restartButton.style.display = "inline-block";
+            }
+
+            //Funkcija za ponovni zagon igre
+            document.getElementById("restartButton").addEventListener("click", () => {
+                attempts = 0;
+                correctAnswers = 0;
+                incorrectAnswers = 0;
+
+                // Nastavimo, da gre za drugi poskus
+                isFirstRound = false; 
+
+                document.getElementById("gameResult").style.display = "none";  // Skrijemo rezultat
+                document.getElementById("restartButton").style.display = "none";  // Skrijemo gumb za ponovni zagon
+
+                drawGame();  // Ponovno narišemo igro
+            });
+
+            
+            //function sendResult(correct) {
+            //    fetch("https://moja-igra-api.onrender.com/submit", {
+            //        method: "POST",
+            //        headers: { "Content-Type": "application/json" },
+            //    body: JSON.stringify({ player: "uporabnik", correct})
+            //    });
+            //}
+
+            drawGame();
+        </script>
+    </body>
+</html>
