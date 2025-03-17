@@ -13,10 +13,13 @@
         <canvas id="gameCanvas" width="800" height="250"></canvas>
 
         <!-- Div za prikaz rezultata -->
-         <div id="gameResult" style="display: none; font-size: 24px;"></div>
+        <div id="gameResult" style="display: none; font-size: 24px;"></div>
 
-         <!-- Gumb za ponovni zagon igre-->
-          <button id="restartButton" style="display: none; font-size: 18px; padding: 10px 20px;">Ponovi nalogo</button>
+        <!-- Gumb za ponovni zagon igre-->
+        <button id="restartButton" style="display: none; font-size: 18px; padding: 10px 20px;">Ponovi nalogo</button>
+
+        <!-- Gumb za zaključek igre -->
+        <button id="exitButton" style="display: none; font-size: 18px; padding: 10px 20px;">Zaključi reševanje</button>
 
         <script>
             const canvas = document.getElementById("gameCanvas");
@@ -85,6 +88,10 @@
                 // Pokažemo gumb za ponovni zagon igre
                 const restartButton = document.getElementById("restartButton");
                 restartButton.style.display = "inline-block";  // Prikazemo gumb
+
+                // Prikažemo gumb za končanje reševanja
+                const exitButton = document.getElementById("exitButton");
+                exitButton.style.display = "inline-block";
             }
 
             function showResult() {
@@ -98,6 +105,10 @@
                 // Pokažemo gumb za ponovni zagon igre
                 const restartButton = document.getElementById("restartButton");
                 restartButton.style.display = "inline-block";
+
+                // Prikažemo gumb za končanje reševanja
+                const exitButton = document.getElementById("exitButton");
+                exitButton.style.display = "inline-block";
             }
 
             //Funkcija za ponovni zagon igre
@@ -111,8 +122,14 @@
 
                 document.getElementById("gameResult").style.display = "none";  // Skrijemo rezultat
                 document.getElementById("restartButton").style.display = "none";  // Skrijemo gumb za ponovni zagon
+                document.getElementById("exitButton").style.display = "none";
 
                 drawGame();  // Ponovno narišemo igro
+            });
+
+            //Funkcija za končanje reševanja
+            document.getElementById("exitButton").addEventListener("click", () => {
+                window.location.href = "../index.html";  // lahko vpišeš kateri koli link
             });
 
             
