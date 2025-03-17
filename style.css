@@ -10,7 +10,7 @@ body {
     font-size: 22px;
     font-weight: bold;
     color: white;
-    background-color: #007bff; /* Modra barva */
+    background-color: #7fa4ee; /* Modra barva */
     text-decoration: none;
     border-radius: 10px;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -18,7 +18,7 @@ body {
 }
 
 .gumb:hover {
-    background-color: #0056b3; /* Temnejša modra ob prehodu */
+    background-color: #5382e0; /* Temnejša modra ob prehodu */
     transform: scale(1.05);
 }
 

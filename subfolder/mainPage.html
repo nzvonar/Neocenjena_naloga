@@ -3,20 +3,20 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Kvadratki Igra</title>  <!--naslov igre-->
+        <title>Neocenjena naloga</title>  <!--naslov igre-->
         <link rel="stylesheet" href="style2.css">
     </head>
 
     <body>
-        <h1>Kvadratki Igra</h1>
-        <p>Pritisni ustrezno tipko kvadrata, v katerem se nahaja krog.</p>
+        <h1>Neocenjena naloga</h1>
+        <p>Pritisni ustrezno tipko, ki pripada kvadratu, v katerem se nahaja krog.</p>
         <canvas id="gameCanvas" width="800" height="250"></canvas>
 
         <!-- Div za prikaz rezultata -->
          <div id="gameResult" style="display: none; font-size: 24px;"></div>
 
          <!-- Gumb za ponovni zagon igre-->
-          <button id="restartButton" style="display: none; font-size: 18px; padding: 10px 20px;">Ponovi igro</button>
+          <button id="restartButton" style="display: none; font-size: 18px; padding: 10px 20px;">Ponovi nalogo</button>
 
         <script>
             const canvas = document.getElementById("gameCanvas");
@@ -33,29 +33,27 @@
                 ctx.fillStyle = "white";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                ctx.fillStyle = "red";
                 ctx.font = "20px Arial";
-                ctx.fillText("Pritisni pravo črko!", 320, 30);
 
                 Object.entries(squares).forEach(([letter, x]) => {
-                    ctx.fillStyle = "blue";
+                    ctx.fillStyle = "#696969";
                     ctx.fillRect(x - 20, 80, 80, 80);
 
-                    ctx.fillStyle = "blue";
+                    ctx.fillStyle = "#696969";
                     ctx.fillText(letter, x + 13, 190);
                 });
 
                 correctLetter = Object.keys(squares)[Math.floor(Math.random() * 4)];
                 let circleX = squares[correctLetter];
 
-                ctx.fillStyle = "yellow";
+                ctx.fillStyle = "white";
                 ctx.beginPath();
                 ctx.arc(circleX + 20, 120, 20, 0, Math.PI * 2);
                 ctx.fill();
             }
 
             document.addEventListener("keydown", (event) => {
-                if (attempts >= 15) return; // ko dosežemo 15 poskusov, ne naredimo nič več
+                if (attempts >= 30) return; // ko dosežemo 30 poskusov, ne naredimo nič več
              
                 if (event.key.toUpperCase() === correctLetter) {
                     correctAnswers++;
@@ -67,8 +65,8 @@
 
                 attempts++;
 
-                // po 15. poskusu prikažemo rezultat
-                if (attempts >= 15) {
+                // po 30. poskusu prikažemo rezultat
+                if (attempts >= 30) {
                     if (isFirstRound) {
                         showFirstRoundResult();
                     } else {
@@ -93,8 +91,8 @@
                 const resultDiv = document.getElementById("gameResult");
                 resultDiv.style.display = "block";  // Prikazemo rezultat
                 resultDiv.innerHTML = `
-                    <p>Pravilnih odgovorov: ${correctAnswers}</p>
-                    <p>Napačnih odgovorov: ${incorrectAnswers}</p>
+                    <p>Pravilni odgovori: ${correctAnswers}</p>
+                    <p>Napačni odgovori: ${incorrectAnswers}</p>
                 `;
 
                 // Pokažemo gumb za ponovni zagon igre
