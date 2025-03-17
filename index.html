@@ -9,8 +9,106 @@
 
     <body>
         <h1>Neocenjena naloga</h1>
-        <div>
-            <a href="subfolder/mainPage.html" class="gumb">Začni z reševanjem</a>
+        <div class="input-container">
+            <label for="userCode">Vnesi svojo šifro:</label>
+            <input id="submitCodeButton" name="userCode">
+            <button onclick="submitCode()">Potrdi</button>
         </div>
+
+        <!-- Gumb za prikaz testa-->
+        <div id="startTestContainer">
+            <a href="#" class="gumb" id="startTestButton">Testni preizkus</a>
+        </div>
+
+        <p id="instructions" style="display: none;">Pritisni ustrezno tipko, ki pripada kvadratu, v katerem se nahaja krog.</p>
+        <canvas id="gameCanvas" width="800" height="250" style="display: none"></canvas>
+
+        <div id="gameResult" style="display: none; font-size: 24px;"></div>
+
+        <script>
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+            const startTestButton = document.getElementById("startTestButton");
+            const submitCodeButton = document.getElementById("submitCodeButton");
+            const instructions = document.getElementById("instructions");
+
+            const squares = { "A": 150, "B": 300, "C": 450, "D": 600 };
+            let attempts = 0;
+            let correctLetter = "";
+            let correctAnswers = 0; 
+            let incorrectAnswers = 0;
+            let testStarted = false; // ali se je test začel
+
+            function drawGame() {
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.font = "20px Arial";
+
+                Object.entries(squares).forEach(([letter, x]) => {
+                    ctx.fillStyle = "#696969";
+                    ctx.fillRect(x - 20, 80, 80, 80);
+
+                    ctx.fillStyle = "#696969";
+                    ctx.fillText(letter, x + 13, 190);
+                });
+
+                correctLetter = Object.keys(squares)[Math.floor(Math.random() * 4)];
+                let circleX = squares[correctLetter];
+
+                ctx.fillStyle = "white";
+                ctx.beginPath();
+                ctx.arc(circleX + 20, 120, 20, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Ob kliku na "Testni preizkus" začne test
+            startTestButton.addEventListener("click", (event) => {
+                event.preventDefault(); // Preprečimo privzeto obnašanje gumba
+
+                startTestContainer.style.display = "none"; // Skrijemo gumb
+                instructions.style.display = "block";
+                canvas.style.display = "block";
+                testStarted = true;
+                drawGame();
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (!testStarted || attempts >= 5) return;
+             
+                if (event.key.toUpperCase() === correctLetter) {
+                    correctAnswers++;
+                } else {
+                    incorrectAnswers++;
+                }
+
+                attempts++;
+
+                if (attempts >= 5) {
+                    showResult();
+                } else {
+                    drawGame();
+                }
+            });
+
+            function showResult() {
+                const resultDiv = document.getElementById("gameResult");
+                resultDiv.style.display = "block";  // Prikazemo rezultat
+                resultDiv.innerHTML = `
+                    <p>Pravilni odgovori: ${correctAnswers}</p>
+                    <p>Napačni odgovori: ${incorrectAnswers}</p>
+                    <div>
+                        <a href="subfolder/mainPage.html" class="gumb">Začni z reševanjem</a>
+                    </div>
+                `;
+            }
+
+            // Tukaj preprečimo izvajanje testa, ko vnašaš šifro
+            submitCodeButton.addEventListener("click", (event) => {
+                event.preventDefault(); // Preprečimo privzeto obnašanje gumba za potrdi
+                console.log("Vnesena šifra:", document.getElementById("userCode").value);
+                // Logika za preverjanje šifre se lahko doda tukaj
+            });
+        </script>
     </body>
 </html>
