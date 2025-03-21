@@ -49,6 +49,12 @@
                 correctLetter = Object.keys(squares)[Math.floor(Math.random() * 4)];
                 let circleX = squares[correctLetter];
 
+                setTimeout(() => {
+                    drawCircle(circleX);
+                }, 50);                
+            }
+
+            function drawCircle(circleX) {
                 ctx.fillStyle = "white";
                 ctx.beginPath();
                 ctx.arc(circleX + 20, 120, 20, 0, Math.PI * 2);
