@@ -10,6 +10,7 @@
     <body>
         <h1>Neocenjena naloga</h1>
         <p>Pritisni ustrezno tipko, ki pripada kvadratu, v katerem se nahaja krog.</p>
+        <p>Čas: <span id="timer">0:00</span></p>
         <canvas id="gameCanvas" width="800" height="250"></canvas>
 
         <!-- Div za prikaz rezultata -->
@@ -31,6 +32,10 @@
             let correctAnswers = 0; 
             let incorrectAnswers = 0;
             let isFirstRound = true;
+
+            // za štetje časa
+            let timerInterval;
+            let startTime;
 
             function drawGame() {
                 ctx.fillStyle = "white";
@@ -61,6 +66,28 @@
                 ctx.fill();
             }
 
+            function startTimer() {
+                clearInterval(timerInterval); // prepreči dvojni zagon
+                startTime = Date.now();
+
+                timerInterval = setInterval(() => {
+                    const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                    const minutes = Math.floor(elapsedTime / 60);
+                    const seconds = elapsedTime % 60;
+                    document.getElementById("timer").textContent = 
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timerInterval);
+            }
+
+            function resetTimer() {
+                stopTimer();
+                document.getElementById("timer").textContent = "0";
+            }
+
             document.addEventListener("keydown", (event) => {
                 if (attempts >= 30) return; // ko dosežemo 30 poskusov, ne naredimo nič več
              
@@ -74,8 +101,9 @@
 
                 attempts++;
 
-                // po 30. poskusu prikažemo rezultat
+                // po 30. poskusu prikažemo rezultat in ustavimo čas
                 if (attempts >= 30) {
+                    stopTimer();
                     if (isFirstRound) {
                         showFirstRoundResult();
                     } else {
@@ -130,6 +158,8 @@
                 document.getElementById("restartButton").style.display = "none";  // Skrijemo gumb za ponovni zagon
                 document.getElementById("exitButton").style.display = "none";
 
+                resetTimer(); // ponastavi čas na 0
+                startTimer();
                 drawGame();  // Ponovno narišemo igro
             });
 
@@ -147,6 +177,8 @@
             //    });
             //}
 
+            resetTimer(); // ponastavi čas pred začetkom nove igre
+            startTimer();
             drawGame();
         </script>
     </body>
