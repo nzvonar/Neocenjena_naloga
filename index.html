@@ -32,7 +32,7 @@
             const submitCodeButton = document.getElementById("submitCodeButton");
             const instructions = document.getElementById("instructions");
 
-            const squares = { "A": 150, "B": 300, "C": 450, "D": 600 };
+            const squares = { "A": 40, "B": 200, "C": 360, "D": 520, "E": 680 };
             let attempts = 0;
             let correctLetter = "";
             let correctAnswers = 0; 
@@ -47,10 +47,10 @@
 
                 Object.entries(squares).forEach(([letter, x]) => {
                     ctx.fillStyle = "#696969";
-                    ctx.fillRect(x - 20, 80, 80, 80);
+                    ctx.fillRect(x, 80, 80, 80);
 
                     ctx.fillStyle = "#696969";
-                    ctx.fillText(letter, x + 13, 190);
+                    ctx.fillText(letter, x + 33, 190);
                 });
 
                 correctLetter = Object.keys(squares)[Math.floor(Math.random() * 4)];
@@ -64,7 +64,7 @@
             function drawCircle(circleX) {
                 ctx.fillStyle = "white";
                 ctx.beginPath();
-                ctx.arc(circleX + 20, 120, 20, 0, Math.PI * 2);
+                ctx.arc(circleX + 40, 120, 20, 0, Math.PI * 2);
                 ctx.fill();
             }
 
