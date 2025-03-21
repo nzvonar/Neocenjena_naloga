@@ -11,7 +11,7 @@
         <h1>Neocenjena naloga</h1>
         <div class="input-container">
             <label for="userCode">Vnesi svojo šifro:</label>
-            <input id="submitCodeButton" name="userCode">
+            <input id="userCode" name="userCode">
             <button onclick="submitCode()">Potrdi</button>
         </div>
 
@@ -109,12 +109,11 @@
                 `;
             }
 
-            // Tukaj preprečimo izvajanje testa, ko vnašaš šifro
-            submitCodeButton.addEventListener("click", (event) => {
-                event.preventDefault(); // Preprečimo privzeto obnašanje gumba za potrdi
-                console.log("Vnesena šifra:", document.getElementById("userCode").value);
-                // Logika za preverjanje šifre se lahko doda tukaj
-            });
+            function submitCode() {
+                const userCode = document.getElementById("userCode").value.trim(); // dobimo vrednost iz inputa
+                console.log("Vnesena šifra:", userData.userCode);
+                // Logika za preverjanje šifre se lahko doda tukaj, če je potrebno
+            }
         </script>
     </body>
 </html>
