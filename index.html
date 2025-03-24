@@ -9,7 +9,7 @@
 
     <body>
         <h1>Neocenjena naloga</h1>
-        <div class="input-container">
+        <div id="codeInputContainer" class="input-container">
             <label for="userCode">Vnesi svojo šifro:</label>
             <input id="userCode" name="userCode">
             <button onclick="submitCode()">Potrdi</button>
@@ -38,6 +38,7 @@
             let correctAnswers = 0; 
             let incorrectAnswers = 0;
             let testStarted = false; // ali se je test začel
+            let codeConfirmed = false;
 
             function drawGame() {
                 ctx.fillStyle = "white";
@@ -72,7 +73,12 @@
             startTestButton.addEventListener("click", (event) => {
                 event.preventDefault(); // Preprečimo privzeto obnašanje gumba
 
-                startTestContainer.style.display = "none"; // Skrijemo gumb
+                if (!codeConfirmed) {
+                    alert("Prosimo, najprej vnesi in potrdi svojo šifro z gumbom 'Potrdi'!");
+                    return;
+                }
+
+                document.getElementById("startTestContainer").style.display = "none"; // Skrijemo gumb
                 instructions.style.display = "block";
                 canvas.style.display = "block";
                 testStarted = true;
@@ -111,9 +117,15 @@
 
             function submitCode() {
                 const userCode = document.getElementById("userCode").value.trim(); // dobimo vrednost iz inputa
-                if (userCode) {
-                    localStorage.setItem("userCode", userCode);
+                if (!userCode) {
+                    alert("Vnesi svojo šifro!");
+                    return;
                 }
+
+                localStorage.setItem("userCode", userCode);
+                codeConfirmed = true;
+
+                document.getElementById("codeInputContainer").style.display = "none";
             }
         </script>
     </body>
