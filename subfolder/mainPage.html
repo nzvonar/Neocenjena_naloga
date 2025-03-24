@@ -211,28 +211,28 @@
                 let userCode = localStorage.getItem("userCode") || "neznana"; // preberemo šifro
                 let elapsedTime = document.getElementById("timer").textContent;
 
-                let attemptData = {
-                    pravilni: correctAnswers,
-                    napacni: incorrectAnswers,
-                    cas: elapsedTime,
-                };
-
-                
-                //results.push({
-                //    pravilni: correctAnswers,
-                //    napacni: incorrectAnswers,
-                //    cas: elapsedTime,
-                //});
-
-                //localStorage.setItem("results", JSON.stringify({
-                //    sifra: userCode,
-                //    poskusi: results
-                //}));
-
                 if (window.db) {
-                    window.db.ref("rezultati/" + userCode).push(attemptData)
-                        .then(() => console.log("Podatki shranjeni v Firebase!"))
-                        .catch(error => console.error("Napaka pri shranjevanju:", error));
+                    const userRef = window.db.ref("rezultati/" + userCode);
+
+                    userRef.once("value")
+                        .then(snapshot => {
+                            const attemptNumber = snapshot.numChildren() + 1;
+
+                            let attemptData = {
+                                pravilni: correctAnswers,
+                                napacni: incorrectAnswers,
+                                cas: elapsedTime,
+                                poskus: attemptNumber
+                            };
+
+                            return userRef.push(attemptData);
+                        })
+                        .then(() => {
+                            console.log("Podatki shranjeni v Firebase!");
+                        })
+                        .catch(error => {
+                            console.error("Napaka pri shranjevanju:", error);
+                        });
                 } else {
                     console.error("Firebase še ni inicializiran!");
                 }
