@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pregled rezultatov</title>
+    <link rel="stylesheet" href="style3.css">
 </head>
+
 <body style="display: none;">
-    <div id="loginContainer" style="text-align:center; margin-top: 100px;">
+    <div id="loginContainer">
         <h2>Vnesi geslo za dostop do rezultatov</h2>
         <input type="password" id="passwordInput" placeholder="Geslo">
         <button onclick="checkPassword()">Potrdi</button>
@@ -15,19 +17,7 @@
 
     <div id="resultsContainer" style="display:none;">
         <h1>Pregled rezultatov</h1>
-        <input id="searchCode" placeholder="Vnesi šifro uporabnika">
-        <button onclick="loadResults()">Prikaži rezultate</button>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Poskus</th>
-                    <th>Pravilni</th>
-                    <th>Napačni</th>
-                    <th>Čas</th>
-                </tr>
-            </thead>
-            <tbody id="resultsTable"></tbody>
-        </table>
+        <div id="allResults"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
@@ -45,6 +35,7 @@
             if (input === allowedPassword) {
                 document.getElementById("loginContainer").style.display = "none";
                 document.getElementById("resultsContainer").style.display = "block";
+                loadAllResults();
             } else {
                 errorMsg.textContent = "Napačno geslo!";
             }
@@ -71,30 +62,48 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function loadResults() {
-            let userCode = document.getElementById("searchCode").value.trim();
-            if (!userCode) return alert("Vnesi šifro!");
+        function loadAllResults() {
+            const container = document.getElementById("allResults");
+            container.innerHTML = "";
 
-            let resultsTable = document.getElementById("resultsTable");
-            resultsTable.innerHTML = ""; // Počisti tabelo
-
-            db.ref("rezultati/" + userCode).once("value", (snapshot) => {
+            db.ref("rezultati").once("value", snapshot => {
                 if (!snapshot.exists()) {
-                    resultsTable.innerHTML = "<tr><td colspan='4'>Ni podatkov!</td></tr>";
+                    container.innerHTML = "<p>Ni podatkov za prikaz</p>";
                     return;
                 }
 
-                let attemptIndex = 1;
-                snapshot.forEach((child) => {
-                    let data = child.val();
-                    let row = `<tr>
-                        <td>${data.poskus || attemptIndex}</td>
-                        <td>${data.pravilni}</td>
-                        <td>${data.napacni}</td>
-                        <td>${data.cas}</td>
-                    </tr>`;
-                    resultsTable.innerHTML += row;
-                    attemptIndex++;
+                snapshot.forEach(userSnap => {
+                    const userCode = userSnap.key;
+                    const userData = userSnap.val();
+
+                    // Uporabniški odsek
+                    let html = `<div class="user-section">
+                        <h2>Šifra uporabnika: ${userCode}</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Poskus</th>
+                                    <th>Pravilni odgovori</th>
+                                    <th>Napačni odgovori</th>
+                                    <th>Porabljen čas</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                    let index = 1;
+                    for (const key in userData) {
+                        const data = userData[key];
+                        html += `<tr>
+                            <td>${data.poskus || index}</td>
+                            <td>${data.pravilni}</td>
+                            <td>${data.napacni}</td>
+                            <td>${data.cas}</td>
+                        </tr>`;
+                        index++;
+                    }
+
+                    html += `</tbody></table></div>`;
+                    container.innerHTML += html;
                 });
             });
         }
