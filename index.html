@@ -111,8 +111,9 @@
 
             function submitCode() {
                 const userCode = document.getElementById("userCode").value.trim(); // dobimo vrednost iz inputa
-                console.log("Vnesena šifra:", userData.userCode);
-                // Logika za preverjanje šifre se lahko doda tukaj, če je potrebno
+                if (userCode) {
+                    localStorage.setItem("userCode", userCode);
+                }
             }
         </script>
     </body>

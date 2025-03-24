@@ -37,6 +37,9 @@
             let timerInterval;
             let startTime;
 
+            let userCode = localStorage.getItem("userCode") || "neznana"; // preberemo šifro
+            let results = [];
+
             function drawGame() {
                 ctx.fillStyle = "white";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -88,6 +91,20 @@
                 document.getElementById("timer").textContent = "0:00";
             }
 
+            function saveAttempt() {
+                let elapsedTime = document.getElementById("timer").textContent;
+                results.push({
+                    pravilni: correctAnswers,
+                    napacni: incorrectAnswers,
+                    cas: elapsedTime
+                });
+
+                localStorage.setItem("results", JSON.stringify({
+                    sifra: userCode,
+                    poskusi: results
+                }));
+            }
+
             document.addEventListener("keydown", (event) => {
                 if (attempts >= 30) return; // ko dosežemo 30 poskusov, ne naredimo nič več
              
@@ -104,6 +121,7 @@
                 // po 30. poskusu prikažemo rezultat in ustavimo čas
                 if (attempts >= 30) {
                     stopTimer();
+                    saveAttempt();
                     if (isFirstRound) {
                         showFirstRoundResult();
                     } else {
