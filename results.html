@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregled rezultatov</title>
+</head>
+<body>
+    <h1>Pregled rezultatov</h1>
+    <input id="searchCode" placeholder="Vnesi šifro uporabnika">
+    <button onclick="loadResults()">Prikaži rezultate</button>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Pravilni</th>
+                <th>Napačni</th>
+                <th>Čas</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTable"></tbody>
+    </table>
+
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script>
+        // Firebase konfiguracija
+        const firebaseConfig = {
+            apiKey: "AIzaSyBP5oBV0woZucIJmVEXMVsszn5aJIY0AFI",
+            authDomain: "neocenjena-naloga.firebaseapp.com",
+            databaseURL: "https://neocenjena-naloga-default-rtdb.firebaseio.com",
+            projectId: "neocenjena-naloga",
+            storageBucket: "neocenjena-naloga.firebasestorage.app",
+            messagingSenderId: "935156668371",
+            appId: "1:935156668371:web:ebb01c3fd6c09e7ca54126"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function loadResults() {
+            let userCode = document.getElementById("searchCode").value.trim();
+            if (!userCode) return alert("Vnesi šifro!");
+
+            let resultsTable = document.getElementById("resultsTable");
+            resultsTable.innerHTML = ""; // Počisti tabelo
+
+            db.ref("rezultati/" + userCode).once("value", (snapshot) => {
+                if (!snapshot.exists()) {
+                    resultsTable.innerHTML = "<tr><td colspan='3'>Ni podatkov!</td></tr>";
+                    return;
+                }
+
+                snapshot.forEach((child) => {
+                    let data = child.val();
+                    let row = `<tr>
+                        <td>${data.pravilni}</td>
+                        <td>${data.napacni}</td>
+                        <td>${data.cas}</td>
+                    </tr>`;
+                    resultsTable.innerHTML += row;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
