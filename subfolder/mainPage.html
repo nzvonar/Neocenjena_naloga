@@ -28,6 +28,8 @@
         <button id="exitButton" style="display: none; font-size: 18px; padding: 10px 20px;">Zaključi reševanje</button>
 
         <script>
+            let inputLocked = false;
+
             document.addEventListener("DOMContentLoaded", function () {
                 const firebaseConfig = {
                     apiKey: "AIzaSyBP5oBV0woZucIJmVEXMVsszn5aJIY0AFI",
@@ -114,14 +116,14 @@
             }
 
             document.addEventListener("keydown", (event) => {
-                if (attempts >= 30) return; // ko dosežemo 30 poskusov, ne naredimo nič več
+                if (attempts >= 30 || inputLocked) return; // ko dosežemo 30 poskusov, ne naredimo nič več
+
+                inputLocked = true; // zaklenemo, da ne more pritisniti večkrat
              
                 if (event.key.toUpperCase() === correctLetter) {
                     correctAnswers++;
-                    // sendResult(true);
                 } else {
                     incorrectAnswers++;
-                    // sendResult(false);
                 }
 
                 attempts++;
@@ -136,7 +138,10 @@
                         showResult();
                     }
                 } else {
-                    drawGame();
+                    setTimeout(() => {
+                        drawGame(); // nadaljujemo igro
+                        inputLocked = false; // dovolimo naslednji pritisk po risanju
+                    }, 100);
                 }
             });
 
@@ -186,6 +191,7 @@
 
                 resetTimer(); // ponastavi čas na 0
                 startTimer();
+                inputLocked = false;
                 drawGame();  // Ponovno narišemo igro
             });
 
