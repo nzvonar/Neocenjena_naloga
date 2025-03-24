@@ -5,24 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pregled rezultatov</title>
 </head>
-<body>
-    <h1>Pregled rezultatov</h1>
-    <input id="searchCode" placeholder="Vnesi šifro uporabnika">
-    <button onclick="loadResults()">Prikaži rezultate</button>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Pravilni</th>
-                <th>Napačni</th>
-                <th>Čas</th>
-            </tr>
-        </thead>
-        <tbody id="resultsTable"></tbody>
-    </table>
+<body style="display: none;">
+    <div id="loginContainer" style="text-align:center; margin-top: 100px;">
+        <h2>Vnesi geslo za dostop do rezultatov</h2>
+        <input type="password" id="passwordInput" placeholder="Geslo">
+        <button onclick="checkPassword()">Potrdi</button>
+        <p id="errorMessage" style="color:red;"></p>
+    </div>
+
+    <div id="resultsContainer" style="display:none;">
+        <h1>Pregled rezultatov</h1>
+        <input id="searchCode" placeholder="Vnesi šifro uporabnika">
+        <button onclick="loadResults()">Prikaži rezultate</button>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Poskus</th>
+                    <th>Pravilni</th>
+                    <th>Napačni</th>
+                    <th>Čas</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable"></tbody>
+        </table>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
     <script>
+        document.body.style.display = "block"; // pokažemo stran
+
+        const allowedPassword = "Nežajezakon!";
+
+        function checkPassword() {
+            const input = document.getElementById("passwordInput").value;
+            const errorMsg = document.getElementById("errorMessage");
+
+            if (input === allowedPassword) {
+                document.getElementById("loginContainer").style.display = "none";
+                document.getElementById("resultsContainer").style.display = "block";
+            } else {
+                errorMsg.textContent = "Napačno geslo!";
+            }
+        }
+
+        // omogoči Enter tipko za potrditev gesla
+        document.getElementById("passwordInput").addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+        });
+
         // Firebase konfiguracija
         const firebaseConfig = {
             apiKey: "AIzaSyBP5oBV0woZucIJmVEXMVsszn5aJIY0AFI",
@@ -46,18 +80,21 @@
 
             db.ref("rezultati/" + userCode).once("value", (snapshot) => {
                 if (!snapshot.exists()) {
-                    resultsTable.innerHTML = "<tr><td colspan='3'>Ni podatkov!</td></tr>";
+                    resultsTable.innerHTML = "<tr><td colspan='4'>Ni podatkov!</td></tr>";
                     return;
                 }
 
+                let attemptIndex = 1;
                 snapshot.forEach((child) => {
                     let data = child.val();
                     let row = `<tr>
+                        <td>${data.poskus || attemptIndex}</td>
                         <td>${data.pravilni}</td>
                         <td>${data.napacni}</td>
                         <td>${data.cas}</td>
                     </tr>`;
                     resultsTable.innerHTML += row;
+                    attemptIndex++;
                 });
             });
         }
