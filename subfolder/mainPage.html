@@ -8,6 +8,11 @@
     </head>
 
     <body>
+        <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+
+
         <h1>Neocenjena naloga</h1>
         <p>Pritisni ustrezno tipko, ki pripada kvadratu, v katerem se nahaja krog.</p>
         <span id="timer"></span>
@@ -23,6 +28,26 @@
         <button id="exitButton" style="display: none; font-size: 18px; padding: 10px 20px;">Zaključi reševanje</button>
 
         <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBP5oBV0woZucIJmVEXMVsszn5aJIY0AFI",
+                    authDomain: "neocenjena-naloga.firebaseapp.com",
+                    databaseURL: "https://neocenjena-naloga-default-rtdb.firebaseio.com",
+                    projectId: "neocenjena-naloga",
+                    storageBucket: "neocenjena-naloga.firebasestorage.app",
+                    messagingSenderId: "935156668371",
+                    appId: "1:935156668371:web:ebb01c3fd6c09e7ca54126"
+                };
+
+                firebase.initializeApp(firebaseConfig);
+                const db = firebase.database();
+
+                console.log("Firebase uspešno inicializiran!")
+
+                // nastavitev globalne spremenljivke za dostop do 'db'
+                window.db = db;
+            });
+
             const canvas = document.getElementById("gameCanvas");
             const ctx = canvas.getContext("2d");
 
@@ -36,9 +61,6 @@
             // za štetje časa
             let timerInterval;
             let startTime;
-
-            let userCode = localStorage.getItem("userCode") || "neznana"; // preberemo šifro
-            let results = [];
 
             function drawGame() {
                 ctx.fillStyle = "white";
@@ -89,20 +111,6 @@
             function resetTimer() {
                 stopTimer();
                 document.getElementById("timer").textContent = "0:00";
-            }
-
-            function saveAttempt() {
-                let elapsedTime = document.getElementById("timer").textContent;
-                results.push({
-                    pravilni: correctAnswers,
-                    napacni: incorrectAnswers,
-                    cas: elapsedTime
-                });
-
-                localStorage.setItem("results", JSON.stringify({
-                    sifra: userCode,
-                    poskusi: results
-                }));
             }
 
             document.addEventListener("keydown", (event) => {
@@ -198,6 +206,37 @@
             resetTimer(); // ponastavi čas pred začetkom nove igre
             startTimer();
             drawGame();
+
+            function saveAttempt() {
+                let userCode = localStorage.getItem("userCode") || "neznana"; // preberemo šifro
+                let elapsedTime = document.getElementById("timer").textContent;
+
+                let attemptData = {
+                    pravilni: correctAnswers,
+                    napacni: incorrectAnswers,
+                    cas: elapsedTime,
+                };
+
+                
+                //results.push({
+                //    pravilni: correctAnswers,
+                //    napacni: incorrectAnswers,
+                //    cas: elapsedTime,
+                //});
+
+                //localStorage.setItem("results", JSON.stringify({
+                //    sifra: userCode,
+                //    poskusi: results
+                //}));
+
+                if (window.db) {
+                    window.db.ref("rezultati/" + userCode).push(attemptData)
+                        .then(() => console.log("Podatki shranjeni v Firebase!"))
+                        .catch(error => console.error("Napaka pri shranjevanju:", error));
+                } else {
+                    console.error("Firebase še ni inicializiran!");
+                }
+            }
         </script>
     </body>
 </html>
