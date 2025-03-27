@@ -10,9 +10,29 @@
     <body>
         <h1>Neocenjena naloga</h1>
         <div id="codeInputContainer" class="input-container">
-            <label for="userCode">Vnesi svojo šifro:</label>
-            <input id="userCode" name="userCode">
-            <button onclick="submitCode()">Potrdi</button>
+            <p>Vnesi naslednje podatke za sestavo šifre:</p>
+
+            <div class="input-row">
+                <label for="motherInitial">Prva črka imena mame:</label>
+                <input id="motherInitial" maxlength="1"><br>
+            </div>
+
+            <div class="input-row">
+                <label for="fatherInitial">Prva črka imena očeta:</label>
+                <input id="fatherInitial" maxlength="1"><br>
+            </div>
+
+            <div class="input-row">
+                <label for="birthDay">Rojstni dan:</label>
+                <input id="birthDay" type="number" min="1" max="31"><br>
+            </div>
+
+            <div class="input-row">
+                <label for="birthPlaceInitial">Prva črka kraja rojstva:</label>
+                <input id="birthPlaceInitial" maxlength="2"><br>
+            </div>
+
+            <button class="potrdi" onclick="submitCode()">Potrdi</button>
         </div>
 
         <!-- Gumb za prikaz testa-->
@@ -123,16 +143,46 @@
             }
 
             function submitCode() {
-                const userCode = document.getElementById("userCode").value.trim(); // dobimo vrednost iz inputa
-                if (!userCode) {
-                    alert("Vnesi svojo šifro!");
+                const m = document.getElementById("motherInitial").value.trim().toUpperCase();
+                const f = document.getElementById("fatherInitial").value.trim().toUpperCase();
+                const d = document.getElementById("birthDay").value.trim();
+                const p = document.getElementById("birthPlaceInitial").value.trim().toUpperCase();
+
+                const isSingleLetter = (val) => /^[A-Z]$/.test(val); // točno ena črka
+                const isOneOrTwoLetters = (val) => /^[A-Z]{1,2}$/.test(val); // 1 ali 2 črki
+
+                if (!m || !f || !d || !p) {
+                    alert("Prosimo, izpolnite vsa polja!");
                     return;
                 }
 
+                if (!isSingleLetter(m)) {
+                    alert("Inicialka mame mora biti ena sama črka (A–Z).");
+                    return;
+                }
+
+                if (!isSingleLetter(f)) {
+                    alert("Inicialka očeta mora biti ena sama črka (A–Z).");
+                    return;
+                }
+
+                if (!/^\d{1,2}$/.test(d) || Number(d) < 1 || Number(d) > 31) {
+                    alert("Rojstni dan mora biti število med 1 in 31.");
+                    return;
+                }
+
+                if (!isOneOrTwoLetters(p)) {
+                    alert("Kraj rojstva mora vsebovati 1 ali 2 črki (A–Z).");
+                    return;
+                }
+
+                const dayFormatted = d.padStart(2, '0'); // zagotovi dvomestno število
+                const userCode = `${m}${f}${dayFormatted}${p}`;
                 localStorage.setItem("userCode", userCode);
                 codeConfirmed = true;
 
                 document.getElementById("codeInputContainer").style.display = "none";
+                alert(`Šifra potrjena: ${userCode}. Zdaj lahko začneš test.`);
             }
         </script>
     </body>

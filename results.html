@@ -68,7 +68,7 @@
 
             db.ref("rezultati").once("value", snapshot => {
                 if (!snapshot.exists()) {
-                    container.innerHTML = "<p>Ni podatkov za prikaz</p>";
+                    container.innerHTML = "<p>Ni podatkov za prikaz.</p>";
                     return;
                 }
 

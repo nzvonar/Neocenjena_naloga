@@ -30,7 +30,35 @@ body {
 }
 
 .input-container {
-    margin-top: 60px;
-    margin-bottom: 60px;;
-    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* razmik med vrsticami */
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-row label {
+    width: 180px;
+    font-weight: bold;
+    text-align: left; /* <-- poravnava besedila na levo */
+}
+
+.input-row input {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.potrdi {
+    width: 100px;
+    height: 28px;
+    font-size: 17px;
+    align-self: center;
+    margin-top: 20px;
 }
